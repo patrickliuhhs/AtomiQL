@@ -32,11 +32,11 @@ const useQuery = (query: string): AtomDataArray => {
 
   const { url, cache, setCache } = useContext(AppContext);
   console.log('url', url);
-  console.log('cache', cache);
+  // console.log('cache', cache);
 
-  const cacheRespone = cache[query];
+  const cacheResponse = cache[query];
 
-  if (cacheRespone) {
+  if (cacheResponse) {
     console.log('you did it!');
     const { loading, hasError, data } = cache[query];
     return [data, loading, hasError];
