@@ -3,7 +3,7 @@ import { request } from 'graphql-request';
 import { useEffect, useContext } from 'react';
 import { AppContext } from './atomiContext';
 
-interface AtomData {
+export interface AtomData {
   loading: boolean;
   data: null | { [key: string]: any };
   hasError: boolean;
@@ -38,19 +38,25 @@ const useQuery = (query: string): AtomDataArray => {
 
   if (cacheResponse) {
     console.log('you did it!');
-    const { loading, hasError, data } = cache[query];
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const [cachedAtomData] = useAtom(cacheResponse);
+    const { loading, hasError, data } = cachedAtomData;
+    // const { loading, hasError, data } = useAtom(cache[query]);
+    console.log('cachedAtomData after successful cache', cachedAtomData);
     return [data, loading, hasError];
     
   }
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [atomData, setAtom] = useAtom(newAtom)
+  const [atomData, setAtom] = useAtom(newAtom);
+  console.log('atomData inside usequery', atomData);
   const { loading, hasError, data } = atomData;
+  console.log('newAtom inside usequery', newAtom);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     (async () => {
       try {
         const result = await request(url, query)
-        console.log('result', result);
+        console.log('result inside setAtom useEffect', result);
         setAtom({
           data: result,
           loading: false,
@@ -70,8 +76,11 @@ const useQuery = (query: string): AtomDataArray => {
 
   // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
-    console.log('AtomData: ', atomData);
-    if (!loading) setCache(query, atomData);
+    console.log('newAtom inside setcache useeffect: ', newAtom);
+    if (!loading) {
+      setCache(query, newAtom);
+      console.log('not loading in setcache useeffect');
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [atomData]);
 

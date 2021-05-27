@@ -1,4 +1,7 @@
+import { Atom } from 'jotai';
+// import { Atom } from 'jotai/core/atom';
 import React from 'react';
+import { AtomData } from './useQuery';
 
 interface MyProps {
   url: string;
@@ -6,15 +9,15 @@ interface MyProps {
 
 interface CacheContainer {
   url: string;
-  cache: { [key: string]: { [key: string]: any } };
-  setCache: (arg1: string, arg2: {}) => void;
+  cache: { [key: string]: Atom<AtomData> };
+  setCache: (arg1: string, arg2: Atom<AtomData>) => void;
 };
 
 
 const initialCache: CacheContainer = {
   url: '',
   // eslint-disable-next-line no-unused-vars
-  setCache: (arg1: string, arg2: { [key: string]: any }) => { },
+  setCache: (arg1: string, arg2: Atom<AtomData>) => {},
   cache: {}
 }
 
@@ -35,12 +38,14 @@ export default class AtomiProvider extends React.Component<MyProps> {
     this.cacheContainer = cacheContainer;
   }
 
-  setCache = (query: string, atomData: { [key: string]: any }) => {
+  setCache = (query: string, atomData: Atom<AtomData> ) => {
+    console.log('inside setCache');
+    console.log('atomData', atomData);
     this.cacheContainer.cache = {
       ...this.cacheContainer.cache,
       [query]: atomData
     }
-    console.log('cache', this.cacheContainer.cache);
+    console.log('cache inside context setCache', this.cacheContainer.cache);
   }
 
   render() {
